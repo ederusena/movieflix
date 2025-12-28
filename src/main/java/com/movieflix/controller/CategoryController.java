@@ -26,13 +26,7 @@ public class CategoryController {
     }
 
     @PostMapping()
-    public void createCategory(@RequestBody Category category) {
-        // Implementation for creating a new category goes here
-        if (category != null) {
-            return;
-        }
-
-        categoryService.createCategory(category);
-        categoryService.save();
+    public void saveCategory(@RequestBody Category category) {
+        categoryService.saveCategory(category);
     }
 }

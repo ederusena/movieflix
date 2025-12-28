@@ -19,9 +19,8 @@ public class CategoryService {
         return categoryRepository.findAll();
     }
 
-    public void createCategory(Category category) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'createCategory'");
+    public Category saveCategory(Category category) {
+        return categoryRepository.save(category);
     }
 
     public void save() {
