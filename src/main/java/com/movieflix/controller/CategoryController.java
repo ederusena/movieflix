@@ -10,7 +10,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.movieflix.model.Category;
+import com.movieflix.dto.CategoryRequest;
+import com.movieflix.dto.CategoryResponse;
+import com.movieflix.mapper.CategoryMapper;
 import com.movieflix.service.CategoryService;
 
 import lombok.RequiredArgsConstructor;
@@ -23,30 +25,31 @@ public class CategoryController {
     private final CategoryService categoryService;
 
     @GetMapping()
-    public List<Category> getCategories() {
-        return categoryService.findAll();
+    public List<CategoryResponse> getCategories() {
+        var categoryList = categoryService.findAll();
+        return categoryList.stream()
+                .map(CategoryMapper::toCategoryResponse)
+                .toList();
     }
 
     @PostMapping()
-    public void saveCategory(@RequestBody Category category) {
-        categoryService.saveCategory(category);
+    public CategoryResponse saveCategory(@RequestBody CategoryRequest request) {
+        var category = CategoryMapper.toCategory(request);
+        var savedCategory = categoryService.saveCategory(category);
+        return CategoryMapper.toCategoryResponse(savedCategory);
     }
 
     @GetMapping("/{id}")
-    public Category getCategoryById(@PathVariable Long id) {
+    public CategoryResponse getCategoryById(@PathVariable Long id) {
         var optCategory = categoryService.findById(id);
         if (optCategory.isPresent()) {
-            return optCategory.get();
+            return CategoryMapper.toCategoryResponse(optCategory.get());
         }
         return null;
     }
 
     @DeleteMapping("/{id}")
     public void deleteCategoryById(@PathVariable Long id) {
-        var optCategory = categoryService.findById(id);
-        if (optCategory.isPresent()) {
-            categoryService.deleteCategoryById(id);
-            return;
-        }
+        categoryService.deleteCategoryById(id);
     }
 }
