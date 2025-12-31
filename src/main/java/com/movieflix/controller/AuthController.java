@@ -21,7 +21,7 @@ import com.movieflix.service.UserService;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/api/movieflix/auth")
 @RequiredArgsConstructor
 public class AuthController {
 
