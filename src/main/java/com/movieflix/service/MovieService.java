@@ -91,4 +91,8 @@ public class MovieService {
     public List<Movie> findByStreamings(Long streaming) {
         return movieRepository.findMovieByStreamings(streaming);
     }
+
+    public List<Movie> findTop5ByOrderByRatingDesc() {
+        return movieRepository.findTop5ByOrderByRatingDesc();
+    }
 }

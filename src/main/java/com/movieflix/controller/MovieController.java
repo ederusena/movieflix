@@ -38,6 +38,15 @@ public class MovieController {
         return ResponseEntity.ok(movieList);
     }
 
+    @GetMapping("/top")
+    public ResponseEntity<List<MovieResponse>> getTopRated() {
+        List<MovieResponse> movieList = service.findTop5ByOrderByRatingDesc()
+                .stream()
+                .map(MovieMapper::toMovieResponse)
+                .toList();
+        return ResponseEntity.ok(movieList);
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<MovieResponse> getById(@PathVariable Long id) {
         return service.findById(id)
