@@ -59,4 +59,36 @@ public class MovieService {
                         .orElseThrow(() -> new RuntimeException("Streaming not found with id: " + stream.getId())))
                 .toList();
     }
+
+    public Optional<Movie> update(Long id, Movie movie) {
+        var existingMovie = findById(id);
+        if (existingMovie.isPresent()) {
+            var toUpdate = existingMovie.get();
+            toUpdate.setTitle(movie.getTitle());
+            toUpdate.setDescription(movie.getDescription());
+            toUpdate.setReleaseDate(movie.getReleaseDate());
+            toUpdate.setRating(movie.getRating());
+
+            var streamings = this.findStreamings(movie.getStreamings());
+            var categories = this.findCategories(movie.getCategories());
+
+            toUpdate.getCategories().clear();
+            toUpdate.getStreamings().clear();
+            toUpdate.getCategories().addAll(categories);
+            toUpdate.getStreamings().addAll(streamings);
+
+            movieRepository.save(toUpdate);
+            return Optional.of(toUpdate);
+        }
+        return Optional.empty();
+
+    }
+
+    public List<Movie> findByCategoryId(Long categoryId) {
+        return movieRepository.findMovieByCategoryId(categoryId);
+    }
+
+    public List<Movie> findByStreamings(Long streaming) {
+        return movieRepository.findMovieByStreamings(streaming);
+    }
 }
