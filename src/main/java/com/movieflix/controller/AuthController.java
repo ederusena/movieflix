@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -20,6 +21,7 @@ import com.movieflix.dto.LoginRequest;
 import com.movieflix.dto.LoginResponse;
 import com.movieflix.dto.UserRequest;
 import com.movieflix.dto.UserResponse;
+import com.movieflix.exception.UsernameOrPasswordInvalidException;
 import com.movieflix.mapper.UserMapper;
 import com.movieflix.model.User;
 import com.movieflix.service.UserService;
@@ -46,13 +48,17 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest login) {
-        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                login.email(), login.password());
-        Authentication authentication = authManager.authenticate(authToken);
+        try {
+            UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                    login.email(), login.password());
+            Authentication authentication = authManager.authenticate(authToken);
 
-        User user = (User) authentication.getPrincipal();
-        String token = tokenService.generateToken(user);
-        return ResponseEntity.ok(new LoginResponse(token));
+            User user = (User) authentication.getPrincipal();
+            String token = tokenService.generateToken(user);
+            return ResponseEntity.ok(new LoginResponse(token));
+        } catch (BadCredentialsException e) {
+            throw new UsernameOrPasswordInvalidException("Invalid username or password");
+        }
     }
 
     @PostMapping("/register")
