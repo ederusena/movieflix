@@ -20,6 +20,7 @@ import com.movieflix.mapper.MovieMapper;
 import com.movieflix.model.Movie;
 import com.movieflix.service.MovieService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -79,7 +80,7 @@ public class MovieController {
     }
 
     @PostMapping()
-    public ResponseEntity<MovieResponse> save(@RequestBody MovieRequest request) {
+    public ResponseEntity<MovieResponse> save(@Valid @RequestBody MovieRequest request) {
         Movie savedMovie = service.save(MovieMapper.toMovie(request));
 
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -87,7 +88,7 @@ public class MovieController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<MovieResponse> update(@PathVariable Long id, @RequestBody MovieRequest request) {
+    public ResponseEntity<MovieResponse> update(@PathVariable Long id, @Valid @RequestBody MovieRequest request) {
         return service.update(id, MovieMapper.toMovie(request))
                 .map(movie -> ResponseEntity.ok(MovieMapper.toMovieResponse(movie)))
                 .orElse(ResponseEntity.notFound().build());

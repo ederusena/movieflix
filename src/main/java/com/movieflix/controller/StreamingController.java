@@ -18,6 +18,7 @@ import com.movieflix.mapper.StreamingMapper;
 import com.movieflix.model.Streaming;
 import com.movieflix.service.StreamingService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -37,7 +38,7 @@ public class StreamingController {
     }
 
     @PostMapping()
-    public ResponseEntity<StreamingResponse> save(@RequestBody StreamingRequest request) {
+    public ResponseEntity<StreamingResponse> save(@Valid @RequestBody StreamingRequest request) {
         Streaming savedStreaming = service.save(StreamingMapper.toStreaming(request));
 
         return ResponseEntity.status(HttpStatus.CREATED)

@@ -17,6 +17,7 @@ import com.movieflix.dto.CategoryResponse;
 import com.movieflix.mapper.CategoryMapper;
 import com.movieflix.service.CategoryService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -36,7 +37,7 @@ public class CategoryController {
     }
 
     @PostMapping()
-    public ResponseEntity<CategoryResponse> saveCategory(@RequestBody CategoryRequest request) {
+    public ResponseEntity<CategoryResponse> saveCategory(@Valid @RequestBody CategoryRequest request) {
         var category = CategoryMapper.toCategory(request);
         var savedCategory = categoryService.saveCategory(category);
 

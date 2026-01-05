@@ -5,11 +5,12 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
+import jakarta.validation.constraints.NotEmpty;
 import lombok.Builder;
 
 @Builder
 public record MovieRequest(
-        String title,
+        @NotEmpty(message = "Title cannot be empty") String title,
         String description,
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy") LocalDate releaseDate,
         Double rating,

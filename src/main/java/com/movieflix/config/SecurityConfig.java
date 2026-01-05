@@ -13,6 +13,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import jakarta.servlet.DispatcherType;
 import lombok.RequiredArgsConstructor;
 
 @Configuration
@@ -40,6 +41,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST,
                                 "/api/movieflix/auth/register")
                         .permitAll()
+                        .dispatcherTypeMatchers(DispatcherType.ERROR).permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/movieflix/auth/login")
                         .permitAll()
                         .anyRequest().authenticated())
