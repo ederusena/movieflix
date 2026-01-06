@@ -20,17 +20,25 @@ import com.movieflix.mapper.MovieMapper;
 import com.movieflix.model.Movie;
 import com.movieflix.service.MovieService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/api/movieflix/movie")
 @RequiredArgsConstructor
+@Tag(name = "Movie Controller", description = "Endpoints for managing movies")
 public class MovieController {
 
     private final MovieService service;
 
     @GetMapping()
+    @Operation(summary = "Get All Movies", description = "Retrieve a list of all movies")
+    @ApiResponse(responseCode = "200", description = "Successfully retrieved list", content = @Content(schema = @Schema(implementation = MovieResponse.class)))
     public ResponseEntity<List<MovieResponse>> getAll() {
         List<MovieResponse> movieList = service.findAll()
                 .stream()
@@ -40,6 +48,8 @@ public class MovieController {
     }
 
     @GetMapping("/top")
+    @Operation(summary = "Get Top Rated Movies", description = "Retrieve a list of top 5 rated movies")
+    @ApiResponse(responseCode = "200", description = "Successfully retrieved top rated movies", content = @Content(schema = @Schema(implementation = MovieResponse.class)))
     public ResponseEntity<List<MovieResponse>> getTopRated() {
         List<MovieResponse> movieList = service.findTop5ByOrderByRatingDesc()
                 .stream()
@@ -49,6 +59,8 @@ public class MovieController {
     }
 
     @GetMapping("/{id}")
+    @Operation(summary = "Get Movie by ID", description = "Retrieve a movie by its ID")
+    @ApiResponse(responseCode = "200", description = "Successfully retrieved movie", content = @Content(schema = @Schema(implementation = MovieResponse.class)))
     public ResponseEntity<MovieResponse> getById(@PathVariable Long id) {
         return service.findById(id)
                 .map(movie -> ResponseEntity.ok(MovieMapper.toMovieResponse(movie)))
@@ -57,6 +69,8 @@ public class MovieController {
 
     // search by category or streaming
     @GetMapping("/search")
+    @Operation(summary = "Search Movies", description = "Search movies by category ID or streaming service ID")
+    @ApiResponse(responseCode = "200", description = "Successfully retrieved search results", content = @Content(schema = @Schema(implementation = MovieResponse.class)))
     public ResponseEntity<List<MovieResponse>> search(
             @RequestParam(required = false) Long category,
             @RequestParam(required = false) Long streaming) {
@@ -80,6 +94,8 @@ public class MovieController {
     }
 
     @PostMapping()
+    @Operation(summary = "Create Movie", description = "Create a new movie")
+    @ApiResponse(responseCode = "201", description = "Movie created successfully", content = @Content(schema = @Schema(implementation = MovieResponse.class)))
     public ResponseEntity<MovieResponse> save(@Valid @RequestBody MovieRequest request) {
         Movie savedMovie = service.save(MovieMapper.toMovie(request));
 
@@ -88,6 +104,8 @@ public class MovieController {
     }
 
     @PutMapping("/{id}")
+    @Operation(summary = "Update Movie", description = "Update an existing movie by its ID")
+    @ApiResponse(responseCode = "200", description = "Movie updated successfully", content = @Content(schema = @Schema(implementation = MovieResponse.class)))
     public ResponseEntity<MovieResponse> update(@PathVariable Long id, @Valid @RequestBody MovieRequest request) {
         return service.update(id, MovieMapper.toMovie(request))
                 .map(movie -> ResponseEntity.ok(MovieMapper.toMovieResponse(movie)))
@@ -95,6 +113,8 @@ public class MovieController {
     }
 
     @DeleteMapping("/{id}")
+    @Operation(summary = "Delete Movie", description = "Delete a movie by its ID")
+    @ApiResponse(responseCode = "204", description = "Movie deleted successfully")
     public ResponseEntity<Void> deleteById(@PathVariable Long id) {
         service.deleteById(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();

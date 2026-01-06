@@ -26,11 +26,17 @@ import com.movieflix.mapper.UserMapper;
 import com.movieflix.model.User;
 import com.movieflix.service.UserService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/api/movieflix/auth")
 @RequiredArgsConstructor
+@Tag(name = "Auth Controller", description = "Endpoints for user authentication and management")
 public class AuthController {
 
     private final UserService service;
@@ -38,6 +44,8 @@ public class AuthController {
     private final TokenService tokenService;
 
     @GetMapping()
+    @Operation(summary = "Get All Users", description = "Retrieve a list of all users")
+    @ApiResponse(responseCode = "200", description = "Successfully retrieved list", content = @Content(schema = @Schema(implementation = UserResponse.class)))
     public ResponseEntity<List<UserResponse>> getAll() {
         List<UserResponse> userList = service.findAll()
                 .stream()
@@ -47,6 +55,8 @@ public class AuthController {
     }
 
     @PostMapping("/login")
+    @Operation(summary = "User Login", description = "Authenticate user and return a JWT token")
+    @ApiResponse(responseCode = "200", description = "Successfully authenticated", content = @Content(schema = @Schema(implementation = LoginResponse.class)))
     public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest login) {
         try {
             UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
@@ -62,6 +72,8 @@ public class AuthController {
     }
 
     @PostMapping("/register")
+    @Operation(summary = "User Registration", description = "Register a new user")
+    @ApiResponse(responseCode = "201", description = "User registered successfully", content = @Content(schema = @Schema(implementation = UserResponse.class)))
     public ResponseEntity<UserResponse> register(@RequestBody UserRequest request) {
         User savedUser = service.save(UserMapper.toUser(request));
 
@@ -70,6 +82,8 @@ public class AuthController {
     }
 
     @GetMapping("/{id}")
+    @Operation(summary = "Get User by ID", description = "Retrieve a user by its ID")
+    @ApiResponse(responseCode = "200", description = "Successfully retrieved user", content = @Content(schema = @Schema(implementation = UserResponse.class)))
     public ResponseEntity<UserResponse> getById(@PathVariable Long id) {
         return service.findById(id)
                 .map(user -> ResponseEntity.ok(UserMapper.toUserResponse(user)))
@@ -77,6 +91,8 @@ public class AuthController {
     }
 
     @DeleteMapping("/{id}")
+    @Operation(summary = "Delete User", description = "Delete a user by its ID")
+    @ApiResponse(responseCode = "204", description = "User deleted successfully")
     public ResponseEntity<Void> deleteById(@PathVariable Long id) {
         service.deleteById(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
